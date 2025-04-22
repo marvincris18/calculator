@@ -8,14 +8,7 @@ document.addEventListener("keydown", handleKeyPress);
 
 // ✅ Update the calculator display
 function updateDisplay() {
-    let valueToDisplay = Number(displayValue);
-
-    // if (!isNaN(valueToDisplay)) {
-    //     displayValue = Number.isInteger(valueToDisplay)
-    //         ? valueToDisplay
-    //         : valueToDisplay.toFixed(1);
-    // }
-
+    
     calcDisplay.textContent = displayValue;
 }
 
@@ -122,6 +115,12 @@ function calculate() {
     }
 
     operatorCount = 0;
+
+    let valueToDisplay = Number(displayValue);
+    displayValue = Number.isInteger(valueToDisplay)
+            ? valueToDisplay
+            : valueToDisplay.toFixed(1);
+    
     updateDisplay();
     updateDecimalButton();
 }
