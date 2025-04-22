@@ -1,88 +1,108 @@
-// script file
 const calcDisplay = document.querySelector("#display");
 const decimalBtn = document.querySelector(".decimal");
 
-console.log(decimalBtn);
 let displayValue = "0";
-
-
-let number1 = 0;
-let number2 = 0;
 let operatorCount = 0;
 
-
-
-function updateDisplay(){
+// ✅ Update the calculator display
+function updateDisplay() {
     let valueToDisplay = Number(displayValue);
 
-    // Check if it's a valid number
-    if (!isNaN(valueToDisplay)) {
-        displayValue = Number.isInteger(valueToDisplay)
-            ? valueToDisplay
-            : valueToDisplay.toFixed(1);
-    }
+    // if (!isNaN(valueToDisplay)) {
+    //     displayValue = Number.isInteger(valueToDisplay)
+    //         ? valueToDisplay
+    //         : valueToDisplay.toFixed(1);
+    // }
 
     calcDisplay.textContent = displayValue;
 }
 
-function appendToDisplay(newString){
+// ✅ Append characters to the display and control decimal logic
+function appendToDisplay(newChar) {
+    console.log(`Input: ${newChar}`);
 
-    console.log(newString);
+    // ✅ Prevent double decimals
+    if (newChar === ".") {
+        if (displayValue.slice(-1) === ".") return;
     
-    // actions if decimal is chosen. validated and diable the decimal button
+        const [operator, num1, num2] = getDisplayVariables();
+        const current = operator ? num2.toString() : num1.toString();
+        if (current.includes(".")) return;
+    }
 
-
-   
-
-
-    // actions if operators are chosen
-    if (/[+\-*/]/.test(newString)) {
-        // allow only 1 operator in display
-        let lastChar = displayValue.toString().slice(-1);
+    // ✅ Handle operator logic
+    if (/[+\-*/]/.test(newChar)) {
+        const lastChar = displayValue.toString().slice(-1);
         if (/[+\-*/]/.test(lastChar)) {
-            displayValue = displayValue.toString().slice(0, -1) + newString;
+            displayValue = displayValue.toString().slice(0, -1) + newChar;
             updateDisplay();
             return;
         }
 
-        // compute if two operarors were clicked
-        if(++operatorCount > 1){
+        if (++operatorCount > 1) {
             calculate(); 
-            displayValue += newString;
-            operatorCount=1;
+            displayValue += newChar;
+            operatorCount = 1;
             return;
-        }   
-    } 
-    
-    (displayValue===0) ? (displayValue = newString): (displayValue += newString)
-       
+        }
+    }
+
+    // ✅ Prevent leading zero
+   // ✅ Handle starting decimal properly
+    if (displayValue === "0" && newChar === ".") {
+        displayValue = "0.";
+    } else if (displayValue === "0") {
+                displayValue = newChar;
+            } else {
+                displayValue += newChar;
+            }
+
 
     updateDisplay();
-       
-     //allow 1 decimal in the display only
-    //  
-     console.log(`display value ${displayValue}  testresult: ${/[.]/.test(displayValue)}`);
-     decimalBtn.disabled = /[.]/.test(displayValue);
-   
+    updateDecimalButton();
+}
 
-}   
+// ✅ Enable/disable decimal based on current number
+function updateDecimalButton() {
+    const [operator, num1, num2] = getDisplayVariables();
+    const current = operator ? num2.toString() : num1.toString();
+    decimalBtn.disabled = current.includes(".");
+}
 
-function clearDisplay(){
-    displayValue = 0;
+// ✅ Clear the calculator state
+function clearDisplay() {
+    displayValue = "0";
     operatorCount = 0;
+    decimalBtn.disabled = false;
     updateDisplay();
 }
 
-function calculate() {
-    if (operatorCount == 0){
-        return;
-    }
-        
+// ✅ Parse the display into operator, num1, num2
+function getDisplayVariables() {
     const operatorMatch = displayValue.toString().match(/[+\-*/]/);
-    const operator = operatorMatch[0];
-            const parts = displayValue.split(operator);
-            const num1 = Number(parts[0]);
-            const num2 = Number(parts[1]);
+
+    let operator = '';
+    let num1 = 0;
+    let num2 = 0;
+
+    if (operatorMatch) {
+        operator = operatorMatch[0];
+        const [part1, part2 = "0"] = displayValue.split(operator);
+        num1 = Number(part1);
+        num2 = Number(part2);
+    } else {
+        num1 = Number(displayValue);
+    }
+
+    return [operator, num1, num2];
+}
+
+// ✅ Perform calculation based on the operator
+function calculate() {
+    if (operatorCount === 0) return;
+
+    const [operator, num1, num2] = getDisplayVariables();
+    console.log(`Calculating: ${num1} ${operator} ${num2}`);
 
     switch (operator) {
         case '+':
@@ -90,26 +110,28 @@ function calculate() {
             break;
         case '-':
             displayValue = num1 - num2;
-            break
+            break;
         case '*':
             displayValue = num1 * num2;
             break;
         case '/':
-            displayValue = num2 !== 0 ? num1 / num2 : 'Error';
-            break
+            displayValue = num2 !== 0 ? num1 / num2 : "Error";
+            break;
         default:
-            return null;
+            return;
     }
-    
-    updateDisplay();
+
     operatorCount = 0;
+    updateDisplay();
+    updateDecimalButton();
 }
 
+// ✅ Handle backspace/delete
 function deleteLastChar() {
-    if (displayValue.toString().length > 1) {
-        displayValue = displayValue.toString().slice(0, -1);
-    } else {
-        displayValue = 0;
-    }
+    displayValue = displayValue.length > 1
+        ? displayValue.slice(0, -1)
+        : "0";
+
     updateDisplay();
+    updateDecimalButton();
 }
