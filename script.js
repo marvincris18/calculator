@@ -4,6 +4,8 @@ const decimalBtn = document.querySelector(".decimal");
 let displayValue = "0";
 let operatorCount = 0;
 
+document.addEventListener("keydown", handleKeyPress);
+
 // ✅ Update the calculator display
 function updateDisplay() {
     let valueToDisplay = Number(displayValue);
@@ -48,7 +50,6 @@ function appendToDisplay(newChar) {
     }
 
     // ✅ Prevent leading zero
-   // ✅ Handle starting decimal properly
     if (displayValue === "0" && newChar === ".") {
         displayValue = "0.";
     } else if (displayValue === "0") {
@@ -56,7 +57,6 @@ function appendToDisplay(newChar) {
             } else {
                 displayValue += newChar;
             }
-
 
     updateDisplay();
     updateDecimalButton();
@@ -134,4 +134,40 @@ function deleteLastChar() {
 
     updateDisplay();
     updateDecimalButton();
+}
+
+
+
+function handleKeyPress(e) {
+    const key = e.key;
+
+    // Allow number keys
+    if (!isNaN(key)) {
+        appendToDisplay(key);
+    }
+
+    // Allow operators
+    if (["+", "-", "*", "/"].includes(key)) {
+        appendToDisplay(key);
+    }
+
+    // Allow decimal point
+    if (key === ".") {
+        appendToDisplay(".");
+    }
+
+    // Allow Enter or = to calculate
+    if (key === "Enter" || key === "=") {
+        calculate();
+    }
+
+    // Allow Backspace to delete
+    if (key === "Backspace") {
+        deleteLastChar();
+    }
+
+    // Escape clears the display
+    if (key === "Escape") {
+        clearDisplay();
+    }
 }
