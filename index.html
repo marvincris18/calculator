@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
     <link rel="stylesheet" href="styles.css"> 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
     <div class="calculator">
         <div class="display" id="display">0</div>
         <div class="buttons">
             <button class="clear" onclick="clearDisplay()">C</button>
-            <button onclick="appendToDisplay('(')">(</button>
-            <button onclick="appendToDisplay(')')">)</button>
+            <!-- <button onclick="appendToDisplay('%')">%</button>
+            <button onclick="appendToDisplay('-')">(-)</button> -->
             <button class="operator" onclick="appendToDisplay('/')">/</button>
             
             <button onclick="appendToDisplay('7')">7</button>
@@ -32,7 +32,7 @@
             <button class="operator" onclick="appendToDisplay('+')">+</button>
             
             <button onclick="appendToDisplay('0')">0</button>
-            <button onclick="appendToDisplay('.')">.</button>
+            <button class="decimal" onclick="appendToDisplay('.')">.</button>
             <button onclick="deleteLastChar()">⌫</button>
             <button class="equals" onclick="calculate()">=</button>
         </div>

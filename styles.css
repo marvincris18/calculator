@@ -46,6 +46,11 @@ button {
     color: white;
     transition: background-color 0.2s;
 }
+
+.clear{
+    flex-basis: calc(76% - 6px);
+}
+
 button:hover {
     background-color: #5a5a5a;
 }
